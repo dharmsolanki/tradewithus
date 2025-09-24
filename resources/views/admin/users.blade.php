@@ -27,15 +27,6 @@
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap">{{ $user->name }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap">{{ $user->email }}</td>
-                                    {{-- <td class="px-6 py-4 whitespace-nowrap">
-                                        @if($detail->status == 0)
-                                            <span class="text-yellow-600">Pending</span>
-                                        @elseif($detail->status == 1)
-                                            <span class="text-green-600">Approved</span>
-                                        @else
-                                            <span class="text-red-600">Rejected</span>
-                                        @endif
-                                    </td> --}}
                                 </tr>
                             @empty
                                 <tr>

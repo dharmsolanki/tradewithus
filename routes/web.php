@@ -23,7 +23,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Profile routes (for all authenticated users)
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Route to show the investment form (for all authenticated users)
     Route::get('dashboard/invest', [InvestmentDetailsController::class, 'index'])->name('investment.index');
@@ -32,6 +31,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Admin-only routes
     Route::middleware('admin')->group(function () {
+
+        Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+        
         Route::get('/dashboard/users', function () {
             return view('admin.users', ['users' => \App\Models\User::all()]);
         })->name('admin.users');
