@@ -18,7 +18,7 @@ class CreateAdminUser extends Command
     {
         // $username = $this->ask('Enter username');
         $name = $this->ask('Enter name');
-        // $role_id = $this->ask('Enter role ID');
+        $role_id = $this->ask('Enter role ID');
         $email = $this->ask('Enter email');
         $password = $this->secret('Enter password'); // hidden input
 
@@ -28,7 +28,7 @@ class CreateAdminUser extends Command
             'name' => $name,
             'email' => $email,
             'password' => Hash::make($password),
-            // 'role_id' => $role_id,
+            'role_id' => $role_id,
         ]);
 
         $this->info("Admin user '{$name}' created successfully!");

@@ -13,7 +13,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Dashboard route (shared, role-based view)
     Route::get('/dashboard', function () {
-        
+
         if (auth()->user()->isAdmin()) {
             return view('admin.dashboard'); // admin dashboard
         }
@@ -36,8 +36,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
             return view('admin.users', ['users' => \App\Models\User::all()]);
         })->name('admin.users');
 
+        Route::patch('/dashboard/investment/{id}/status', [InvestmentDetailsController::class, 'updateStatus'])
+            ->name('investment.updateStatus'); // Only admin can change status
+
         // You can add more admin routes here
     });
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

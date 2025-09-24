@@ -20,6 +20,7 @@ return new class extends Migration
             $table->date('investment_date');
             $table->string('status')->default(0); // 0 = pending, 1 = approved, 2 = rejected
             $table->string('payment_proof')->nullable();
+            $table->string('remarks')->nullable();
             $table->timestamps();
         });
     }

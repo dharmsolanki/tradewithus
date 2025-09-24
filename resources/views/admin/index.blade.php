@@ -22,21 +22,14 @@
                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                         <thead class="bg-gray-50 dark:bg-gray-700">
                             <tr>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                    Transaction ID
-                                </th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                    Amount
-                                </th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                    Type of Payment
-                                </th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                    Investment Date
-                                </th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                    Status
-                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Transaction ID</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Amount</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Type of Payment</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Investment Date</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Action</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Remarks</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Payment Proof</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
@@ -55,10 +48,57 @@
                                             <span class="text-red-600">Rejected</span>
                                         @endif
                                     </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <form action="{{ route('investment.updateStatus', ['id' => $detail->id]) }}" method="POST" class="flex space-x-2 items-center">
+                                            @csrf
+                                            @method('PATCH')
+
+                                            <!-- Dropdown for status -->
+                                            <select name="status" 
+                                                class="border rounded px-2 py-1 text-sm 
+                                                    bg-white dark:bg-gray-700 
+                                                    text-gray-800 dark:text-gray-200 
+                                                    border-gray-300 dark:border-gray-600">
+                                                <option value="0" {{ $detail->status == 0 ? 'selected' : '' }}>Pending</option>
+                                                <option value="1" {{ $detail->status == 1 ? 'selected' : '' }}>Approved</option>
+                                                <option value="2" {{ $detail->status == 2 ? 'selected' : '' }}>Rejected</option>
+                                            </select>
+
+                                            <!-- Remarks input -->
+                                            <input 
+                                                type="text" 
+                                                name="remarks" 
+                                                placeholder="Enter remarks" 
+                                                value="{{ $detail->remarks }}" 
+                                                class="px-2 py-1 border rounded text-sm w-40
+                                                    bg-white dark:bg-gray-700 
+                                                    text-gray-800 dark:text-gray-200 
+                                                    border-gray-300 dark:border-gray-600"
+                                            >
+
+                                            <!-- Submit button -->
+                                            <button type="submit" 
+                                                class="bg-indigo-600 text-white px-3 py-1 rounded hover:bg-indigo-700">
+                                                Update
+                                            </button>
+                                        </form>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">{{ $detail->remarks }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        @if($detail->payment_proof)
+                                            <a href="{{ asset('storage/payment_proofs/' . $detail->payment_proof) }}" 
+                                               target="_blank" 
+                                               class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700">
+                                                View Proof
+                                            </a>
+                                        @else
+                                            <span class="text-gray-400">N/A</span>
+                                        @endif
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="px-6 py-4 text-center text-gray-500 dark:text-gray-300">
+                                    <td colspan="8" class="px-6 py-4 text-center text-gray-500 dark:text-gray-300">
                                         No investments found.
                                     </td>
                                 </tr>

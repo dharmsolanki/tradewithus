@@ -11,13 +11,13 @@ class InvestmentDetailsController extends Controller
     {
         if (auth()->user()->isAdmin()) {
 
-            $InvestmentDetail = InvestmentDetail::select('transaction_id', 'amount', 'type_of_payment', 'investment_date', 'status', 'payment_proof')
+            $InvestmentDetail = InvestmentDetail::select('id', 'transaction_id', 'amount', 'type_of_payment', 'investment_date', 'status', 'payment_proof', 'remarks')
                 ->orderBy('created_at', 'desc')
                 ->get();
 
             return view('admin.index', ['details' => $InvestmentDetail]); // admin dashboard
         }
-        $InvestmentDetail = InvestmentDetail::select('transaction_id', 'amount', 'type_of_payment', 'investment_date', 'status')
+        $InvestmentDetail = InvestmentDetail::select('transaction_id', 'amount', 'type_of_payment', 'investment_date', 'status','remarks')
             ->where('user_id', auth()->id())
             ->orderBy('created_at', 'desc')
             ->get();
@@ -57,5 +57,31 @@ class InvestmentDetailsController extends Controller
         \App\Models\InvestmentDetail::create($validated);
 
         return redirect()->route('investment.index')->with('success', 'Investment details submitted successfully!');
+    }
+
+    public function updateStatus(Request $request, $id)
+    {
+        // Validate status
+        $request->validate([
+            'status'  => 'required|in:0,1,2',
+            'remarks' => 'nullable|string|max:255', // remarks only if rejected
+        ]);
+
+        // Find the investment
+        $investment = InvestmentDetail::findOrFail($id);
+
+        // Update status
+        $investment->status = $request->status;
+
+        // Save remarks only if rejected
+        if ($request->status == 2) {
+            $investment->remarks = $request->remarks; // assuming you added 'remarks' column in DB and fillable
+        } else {
+            $investment->remarks = null; // clear previous remarks if any
+        }
+
+        $investment->save();
+
+        return back()->with('success', 'Investment status updated successfully!');
     }
 }

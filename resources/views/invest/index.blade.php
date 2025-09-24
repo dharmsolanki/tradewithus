@@ -37,6 +37,9 @@
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                     Status
                                 </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    Remarks
+                                </th>
                             </tr>
                         </thead>
                         <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
@@ -55,6 +58,7 @@
                                             <span class="text-red-600">Rejected</span>
                                         @endif
                                     </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">{{ $detail->remarks }}</td>
                                 </tr>
                             @empty
                                 <tr>
