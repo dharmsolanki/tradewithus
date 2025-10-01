@@ -20,6 +20,10 @@
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                     Email
                                 </th>
+
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    Actions
+                                </th>
                             </tr>
                         </thead>
                         <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
@@ -27,6 +31,34 @@
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap">{{ $user->name }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap">{{ $user->email }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap flex gap-2">
+                                        <!-- Edit Button -->
+                                        <a href="{{ route('admin.users.edit', $user->id) }}"
+                                        class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-xs font-semibold">
+                                            Edit
+                                        </a>
+                                        @if($user->deleted_at)
+                                            <!-- Restore Button -->
+                                            <form action="{{ route('admin.users.restore', $user->id) }}" method="POST" style="display:inline;">
+                                                @csrf
+                                                <button type="submit"
+                                                        class="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-xs font-semibold">
+                                                    Restore
+                                                </button>
+                                            </form>
+                                        @else
+                                            <!-- Soft Delete Button -->
+                                            <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" style="display:inline;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit"
+                                                        class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-xs font-semibold"
+                                                        onclick="return confirm('Are you sure you want to delete this user?')">
+                                                    Delete
+                                                </button>
+                                            </form>
+                                        @endif
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>

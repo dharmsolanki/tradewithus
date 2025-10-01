@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\InvestmentDetailsController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UsersController;
 use App\Models\InvestmentDetail;
 use Illuminate\Support\Facades\Route;
 
@@ -34,12 +35,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
         
-        Route::get('/dashboard/users', function () {
-            return view('admin.users', ['users' => \App\Models\User::all()]);
-        })->name('admin.users');
+        Route::get('/dashboard/users', [UsersController::class, 'index'])
+            ->name('admin.users');
 
         Route::patch('/dashboard/investment/{id}/status', [InvestmentDetailsController::class, 'updateStatus'])
             ->name('investment.updateStatus'); // Only admin can change status
+
+        Route::get('/dashboard/users/edit/{id}', [UsersController::class,'edit'])->name('admin.users.edit');
+        Route::patch('/dashboard/users/edit/{id}', [UsersController::class, 'update'])->name('admin.users.update');
+        Route::delete('/dashboard/users/delete/{id}', [UsersController::class, 'destroy'])->name('admin.users.destroy');
+        Route::post('/dashboard/users/restore/{id}', [UsersController::class, 'restore'])->name('admin.users.restore');
 
         // You can add more admin routes here
     });
