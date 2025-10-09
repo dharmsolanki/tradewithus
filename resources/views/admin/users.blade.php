@@ -10,6 +10,20 @@
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
 
+                    <div class="mb-4 flex justify-between items-center">
+                        <form method="GET" action="{{ route('admin.users') }}" class="flex space-x-2">
+                            <input type="text" name="search" value="{{ $search ?? '' }}" placeholder="Search by user, transaction ID or amount" 
+                                class="px-3 py-2 border rounded-md w-80 text-gray-700 dark:text-gray-200 dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <button type="submit" 
+                                class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">Search</button>
+                        </form>
+
+                        @if($search)
+                            <a href="{{ route('admin.users') }}" 
+                            class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">Clear</a>
+                        @endif
+                    </div>
+
                     <!-- Example Table -->
                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                         <thead class="bg-gray-50 dark:bg-gray-700">

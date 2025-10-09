@@ -7,22 +7,49 @@ use Illuminate\Http\Request;
 
 class InvestmentDetailsController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $search = $request->input('search');
         if (auth()->user()->isAdmin()) {
 
-            $InvestmentDetail = InvestmentDetail::select('id', 'transaction_id', 'amount', 'type_of_payment', 'investment_date', 'status', 'payment_proof', 'remarks')
+
+            $InvestmentDetail = InvestmentDetail::with('user:id,name,email')
+                ->whereHas('user')
+                ->select('id', 'user_id', 'transaction_id', 'amount', 'type_of_payment', 'investment_date', 'status', 'payment_proof', 'remarks')
+                ->when($search, function($query, $search) {
+                    $query->whereHas('user', function($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                    })
+                    ->orWhere('transaction_id', 'like', "%{$search}%")
+                    ->orWhere('amount', 'like', "%{$search}%");
+                })
                 ->orderBy('created_at', 'desc')
                 ->get();
 
-            return view('admin.index', ['details' => $InvestmentDetail]); // admin dashboard
+            return view('admin.index', ['details' => $InvestmentDetail, 'search' => $search]);
         }
-        $InvestmentDetail = InvestmentDetail::select('transaction_id', 'amount', 'type_of_payment', 'investment_date', 'status','remarks')
-            ->where('user_id', auth()->id())
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $InvestmentDetail = InvestmentDetail::select(
+            'transaction_id', 
+            'amount', 
+            'type_of_payment', 
+            'investment_date', 
+            'status',
+            'remarks'
+        )
+        ->where('user_id', auth()->id())
+        ->when($search, function ($query, $search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('transaction_id', 'like', "%{$search}%")
+                  ->orWhere('amount', 'like', "%{$search}%")
+                  ->orWhere('type_of_payment', 'like', "%{$search}%")
+                  ->orWhere('remarks', 'like', "%{$search}%");
+            });
+        })
+        ->orderBy('created_at', 'desc')
+        ->get();
 
-        return view('invest.index', ['details' => $InvestmentDetail]); // Ensure you have a Blade view at resources/views/invest/form.blade.php
+        return view('invest.index', ['details' => $InvestmentDetail, 'search' => $search]); // Ensure you have a Blade view at resources/views/invest/form.blade.php
     }
 
     public function showForm()
@@ -73,12 +100,14 @@ class InvestmentDetailsController extends Controller
         // Update status
         $investment->status = $request->status;
 
+        $investment->remarks = $request->remarks;
+
         // Save remarks only if rejected
-        if ($request->status == 2) {
-            $investment->remarks = $request->remarks; // assuming you added 'remarks' column in DB and fillable
-        } else {
-            $investment->remarks = null; // clear previous remarks if any
-        }
+        // if ($request->status == 2) {
+        //     $investment->remarks = $request->remarks; // assuming you added 'remarks' column in DB and fillable
+        // } else {
+        //     $investment->remarks = null; // clear previous remarks if any
+        // }
 
         $investment->save();
 

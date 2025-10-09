@@ -10,11 +10,21 @@ class UsersController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::withTrashed()->get();
+        $search = $request->input('search');
 
-        return view('admin.users', compact('users'));
+        // Optimized query
+        $users = User::withTrashed()
+            ->when($search, function ($query, $search) {
+                $query->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('id', $search);
+            })
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('admin.users', ['users' => $users, 'search' => $search]);
     }
 
     /**

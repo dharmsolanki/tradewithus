@@ -20,4 +20,9 @@ class InvestmentDetail extends Model
     protected $casts = [
         'investment_date' => 'date', // automatically converted to Carbon
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
 }
